@@ -1,4 +1,5 @@
 const apiKey = "AIzaSyAOFJ2WiYn8npZGZb2lr63MK4oWjnjQRE0";
+
 const baseUrl = "https://www.googleapis.com/youtube/v3";
 const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
@@ -9,11 +10,11 @@ async function getVideoStatistics(videoId) {
   try {
     const response = await fetch(url);
     const result = await response.json();
-    console.log(result);
+    // console.log(result);
     return result.items[0].statistics;
   } catch (error) {
-    console.error("An error occurred:", error);
-    alert("Mission failed.......");
+    console.log("An error occurred:", error);
+    // alert("Mission failed.......");
   }
 }
 
@@ -25,30 +26,34 @@ async function fetchChannelLogo(channelId) {
     const result = await response.json();
     return result.items[0].snippet.thumbnails.high.url;
   } catch (error) {
-    console.error("An error occurred:", error);
-    alert("Failed to load channel logo for " + channelId);
+    console.log("An error occurred:", error);
+    // alert("Failed to load channel logo for " + channelId);
   }
 }
 
 // Generate the random video list on the browser when it loads
-window.onload = () => {
-  const randomQuery = generateRandomQuery();
-  fetchSearchResult(randomQuery);
-};
 
-function generateRandomQuery() {
-  const queries = ["funny cats", "cute puppies", "travel vlog", "cooking tutorial"];
-//   return queries[randomIndex];
-    return "songs";
-}
+// let currentIndex = 0;
+// const queries = ["funny cats", "cute puppies", "travel vlog", "cooking tutorial"];
 
+// window.onload = () => {
+//   const randomQuery = generateRandomQuery();
+//   fetchSearchResult(randomQuery);
+// };
+
+// function generateRandomQuery() {
+//   const query = queries[2];
+//   currentIndex = (currentIndex + 1) % queries.length;
+//   return query;
+// }
+let videoId;
 async function fetchSearchResult(searchString) {
-  const url = `${baseUrl}/search?key=${apiKey}&q=${searchString}&part=snippet&maxResults=15`;
+  const url = `${baseUrl}/search?key=${apiKey}&q=${searchString}&part=snippet&maxResults=6`;
   try {
     const response = await fetch(url);
     const result = await response.json();
     for (let i = 0; i < result.items.length; i++) {
-      let videoId = result.items[i].id.videoId;
+      videoId = result.items[i].id.videoId;
       let channelId = result.items[i].snippet.channelId;
 
       let statistics = await getVideoStatistics(videoId);
@@ -57,12 +62,12 @@ async function fetchSearchResult(searchString) {
       result.items[i].statistics = statistics;
       result.items[i].channelLogo = channelLogo;
     }
-    console.log(result);
-    console.log("errrrrrrrrr");
+    // console.log(result);
+    // console.log("errrrrrrrrr");
     renderVideoOnUI(result.items);
   } catch (error) {
     console.error("An error occurred:", error);
-    alert("Some error occurred. " + error);
+    // alert("Some error occurred. " + error);
   }
 }
 
@@ -112,6 +117,13 @@ function renderVideoOnUI(videoList) {
         </div>
       </div>
     `;
+    // videoCard.innerHTML = innerHtmlCard;
+      const newPageUrl = `videopage.html`;
+      cardDynamic.addEventListener("click", function () {
+        sessionStorage.setItem("videoId", `${videoId}`);
+        window.location.href = newPageUrl;
+      });
+      // videoGrid.appendChild(videoCard);
     vedioContainer.appendChild(cardDynamic);
   });
 }
@@ -130,10 +142,53 @@ function formatViewCount(count) {
 
 // Add a click event listener to the search button
 searchButton.addEventListener("click", () => {
-  const inputData = searchInput.value;
+  const inputData = searchInput.value.trim();
   fetchSearchResult(inputData);
   searchInput.value = ""; // Clear the input field after clicking the button
 });
 
+searchInput.addEventListener("keypress", function (event) {
+  if (event.key === "Enter") {
+      event.preventDefault();
+      const inputData = searchInput.value.trim();
+      fetchSearchResult(inputData);
+      searchInput.value = ""; 
+  }
+});
 
 
+function getSearchStringFromLocalStorage() {
+  return localStorage.getItem('searchString');
+}
+function handleSearchOnFirstPage() {
+  let searchString = getSearchStringFromLocalStorage();
+  if (searchString != null) {
+      localStorage.removeItem('searchString');
+      fetchSearchResult(searchString);
+  } else {
+      let initialVideoString = "Must Watch Sport"
+      fetchSearchResult(initialVideoString.trim());
+  }
+}
+
+handleSearchOnFirstPage();
+
+
+let headerItems = document.getElementsByClassName("right-navbar-search");
+// console.log(Array.from(headerItems));
+
+Array.from(headerItems).forEach((item) => {
+    item.addEventListener("click", () => {
+      fetchSearchResult(item.textContent);
+      console.log("clicked");
+    });
+});
+
+
+
+let headerLogo = document.getElementById("logo-load");
+
+headerLogo.addEventListener("click", () => {
+  localStorage.setItem('searchString', "Youtube Popular");
+  window.location.href = 'index.html';
+})

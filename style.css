@@ -91,6 +91,8 @@ hr{
     justify-content:space-between;
     align-items: center;
     padding: 0 25px;
+    z-index: 2;
+    background: #000;
 }
 .nav-left{
     display: flex;
@@ -98,6 +100,7 @@ hr{
     align-items: center;
     gap: 16px;
     padding: 15px;
+    cursor: pointer;
 }
 .middle-nav{
     width: 50%;
@@ -138,11 +141,13 @@ hr{
     justify-content:center;
     align-items: center;
     border-left: 2px solid #303030 ;
+    cursor: pointer;
 }
 .mic{
     background: #222222;
     padding: 8px 10px;
     border-radius: 50%;
+    cursor: pointer;
 }
 
 .right-nav{
@@ -152,6 +157,7 @@ hr{
 }
 .user{
     border-radius: 50%;
+    cursor: pointer;
 }
 /* right side csss */
 
@@ -161,6 +167,7 @@ hr{
     padding: 15px;
     gap: 15px;
     position: sticky;
+    z-index: 2;
     top:0;
     background: #000;
     overflow: hidden;
@@ -184,13 +191,18 @@ hr{
 }
 .card{
     padding-top: 12px ;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+.card:hover{
+    transform: scale(1.03);
 }
 
 .card>img{
-    
     width: 100%;
     height: 225px;
     border-radius: 1rem;
+    object-fit: cover;
 }
 h5{
     color: #FFF;
@@ -215,7 +227,6 @@ h5{
     height:50px;
     border-radius: 50%;
 }
-
 
 
 
